@@ -16,7 +16,7 @@ class Matrix
 			}
 			throw Matrix::BadData(1);
 			return INT_MIN;
-		}
+		}	
 		void addArr(int m) { intern = new int[m]; }
 		vect(int* row, int len);
 		vect() {};

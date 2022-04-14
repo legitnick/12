@@ -112,7 +112,7 @@ void Matrix::FillWithInput() {
     std::cout << "Please, enter values of the matrix in order, there are " << rowCount * colCount << " elements\n";
     for (int i = 0; i < rowCount; i++) {
         for (int j = 0; j < colCount; j++) {
-            std::cin >> vectarr[i][j];
+            std::cin >> vectarr[i].intern[j];
         }
     }
 }void Matrix::Print() const
