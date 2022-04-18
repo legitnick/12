@@ -1,10 +1,9 @@
 #include "Matrix.h" 
 
 int** newVec(int rowCount, int colCount) {
-    int** intern = new int* [rowCount];
-    for (int i = 0; i < rowCount; ++i)
-        intern[i] = new int[colCount];
+    int** intern = new int* [rowCount]; 
     for (int i = 0; i < rowCount; i++) {
+        intern[i] = new int[colCount];
         for (int j = 0; j < colCount; j++) {
             intern[i][j] = 0;
         }
@@ -13,37 +12,45 @@ int** newVec(int rowCount, int colCount) {
 }
 Matrix::Matrix(int** vector,int rowCount,int colCount) {
     if (vector != nullptr) { 
-        vectarr = new vect[rowCount];
-        for (int i = 0; i < rowCount; i++) {
-            vectarr[i] = vect(vector[i], colCount); 
-        }
+
         this->colCount = colCount;
-        this->rowCount = rowCount;
+        this->rowCount = rowCount; 
+         //the adress shouldn't change
+            head = vectarr = new vect();
+        for (int i = 0; i < rowCount; i++) {
+            InsertVect(vector[i],colCount,vectarr);
+            vectarr++;
+        }
+        vectarr = head;
     }
     else {
-        if (rowCount & colCount) {
-            throw BadData(1);
-        }
+        throw BadPtr();
     }
 }
-Matrix* Matrix::operator =(Matrix const & m1) {
-    rowCount = m1.rowCount;
-    colCount = m1.colCount;
-    for (int i = 0; i < rowCount; i++) {
-        vectarr[i] = vect(m1.vectarr[i]);
+Matrix& Matrix::operator =(Matrix const & m1) {
+    if (rowCount == m1.rowCount && colCount == m1.colCount) {
+
+        rowCount = m1.rowCount;
+        colCount = m1.colCount;
+        std::copy(m1.vectarr, m1.vectarr + m1.rowCount, vectarr);
     }
-    return this;
+    else
+    {
+        throw BadMatrices();//2check
+    }
+    
+    return *this;
 }
 void Matrix::Transform(Matrix& m1)
 {
 }
-Matrix* Matrix::operator+(Matrix  & m1)
+Matrix Matrix::operator+(Matrix  & m1)
 {
     if (rowCount == m1.rowCount && colCount == m1.colCount) {
 
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < colCount; j++) {
-                m1.intern[i][j] += intern[i][j];
+                m1.vectarr[i].intern[j] += vectarr[i][j];
             }
         }
     }
@@ -51,62 +58,71 @@ Matrix* Matrix::operator+(Matrix  & m1)
     {
         throw BadMatrices();//2check
     } 
-    return this;
+    return m1;
+} 
+std::ostream& operator<<(std::ostream& os, const Matrix& m1)
+{   
+    std::cout << " elements:\n";
+    for (int i = 0; i < m1.rowCount; i++) {
+        for (int j = 0; j < m1.colCount; j++) {
+            os << (m1[i][j])<<" ";
+        }
+        os << "\n";
+    }
+    return os;
 }
  
-Matrix::vect Matrix::operator[](int i) const
+Matrix::vect& Matrix::operator[](int i)  const
 {
     if (i > -1) {
         if (i < rowCount) {
             return vectarr[i];
         }
-        throw Matrix::BadData(0);
-        return vectarr[0];
+        throw Matrix::BadData(0); 
     }
     throw Matrix::BadData(1);
 }
-Matrix* Matrix::operator-(Matrix  & m1)
+Matrix Matrix::operator-(Matrix  & m1)
 {
     if (rowCount == m1.rowCount && colCount == m1.colCount) {
 
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < colCount; j++) {
-                m1.intern[i][j] -= intern[i][j];
+                m1[i].intern[j] -= vectarr[i][j];
             }
         }
     }
     else
     {
-        throw BadMatrices();//2check
+        throw BadMatrices(); //incompatible matrices
     }
-    return this;
+    return m1;
 }
 Matrix Matrix::operator*(Matrix  & m1)
 {
-    
-    if (colCount == m1.rowCount) { 
-        int** arr = newVec(rowCount, m1.colCount);
-        for(int h = 0;h<rowCount;h++)
-        for (int i = 0; i < rowCount; i++) {
-            for (int j = 0; j < m1.colCount; j++) {
-                arr[h][i] += intern[i][j] * m1.intern[j][i];
-            } 
-        } 
-        Matrix mat(arr, rowCount, m1.colCount);
+        int** res = newVec(rowCount, colCount);
+    if (rowCount == m1.rowCount && colCount == m1.colCount) {
+        for (int h = 0; h < rowCount; h++)
+            for (int i = 0; i < rowCount; i++) {
+                for (int j = 0; j < m1.colCount; j++) {
+                    res[h][i] += m1[h][j] * vectarr[j][i];
+                }
+            }
 
-
-        return mat;
     }
-    else 
+    else
     {
-        std::cout << "ERR!Matrixs sizes are incompatible!\n";
-    }
+        throw BadMatrices(); 
+    } 
+    Matrix m2(res, rowCount, colCount);
+
+        return m2; 
 }
 Matrix::~Matrix() {
-    for (int i = 0; i <rowCount; ++i) {
-        delete[] intern[i];
+    for (int i = 1; i <rowCount; ++i) {
+        vectarr[i].~vect();
     }
-    delete[] intern;
+    delete[] vectarr;
 } 
 void Matrix::FillWithInput() {
     std::cout << "Please, enter values of the matrix in order, there are " << rowCount * colCount << " elements\n";
@@ -115,28 +131,24 @@ void Matrix::FillWithInput() {
             std::cin >> vectarr[i].intern[j];
         }
     }
-}void Matrix::Print() const
-{
-    std::cout <<  " elements:\n";
-    for (int i = 0; i < rowCount; i++) {
-        for (int j = 0; j<colCount; j++) {
-            std::cout << (*this)[i][j] << (i + 1 == rowCount ? "\n" : " ");
-        }
-    }
-}
+} 
 Matrix::vect::vect(int* row, int len) {
-    intern = new int[len];
-    for (int i = 0; i < len; i++) {
-        intern[i] = row[i];
-    }
+    this->intern = new int[len];
+
+    std::copy(row, row+ len, intern);
     this->len = len;
 }
+void Matrix::InsertVect(int* row, int len, vect* v) {
+    vect* v1 = new vect();
+    v1->intern = new int[len];
 
+    std::copy(row, row + len, v1->intern);
+    v1->len = len;
+    std::copy(v1, v1 + len, v); 
+}
  
 Matrix::vect::vect(vect& v) {
     this->len = v.len;
     intern = new int[len];
-    for (int i = 0; i < len; i++) {
-        intern[i] = v[i];
-    }
+    std::copy(v.intern, v.intern+ len, intern);
 }

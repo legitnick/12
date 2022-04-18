@@ -1,8 +1,10 @@
 #pragma once
 #include<vector>
+#include <algorithm>
 #include <iostream>  
 class Matrix
 {
+	int rowCount,colCount; 
 	struct vect {
 		int* intern;
 		int len;
@@ -20,12 +22,15 @@ class Matrix
 		void addArr(int m) { intern = new int[m]; }
 		vect(int* row, int len);
 		vect() {};
-
+		~vect()
+		{
+			delete intern;
+			std::cout << "vector has been deleted\n"; 
+		}
 		vect(vect& v);
 	};
-	int rowCount,colCount;
-	int** intern;
-	vect* vectarr;
+	vect* vectarr, * head;
+		void InsertVect(int* row, int len,vect* v);
 public:
 	Matrix(int** vector, int rowCount, int colCount);
 	~Matrix();
@@ -40,14 +45,13 @@ public:
 		bool under;
 
 	};
-
-	Matrix* operator-(Matrix  & m1);
+	Matrix::vect& operator[](int i)const;
+	Matrix operator-(Matrix  & m1);
 	Matrix operator*(Matrix  & m1);
-	Matrix* operator+(Matrix   &m1);
-	vect  operator[](int i)const;	
-	Matrix* operator =(Matrix const & m1);
+	Matrix operator+(Matrix   &m1);
+	friend std::ostream& operator<<(std::ostream& os, const Matrix& m1); 
+	Matrix& operator =(Matrix const & m1);
 	void Transform(Matrix& m1);
-	void Print() const;
 	void FillWithInput();
 };
 

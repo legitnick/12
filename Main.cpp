@@ -17,13 +17,13 @@ int main() {
 
     Matrix mat1(a,rowCount,colCount);
     Matrix mat2(a,rowCount,colCount);
-    mat1.Print(); 
+    std::cout<<mat1;
     mat2 = mat1;
     mat2.FillWithInput();
     std::cout << "\n";
     mat1 = ( mat1 * mat2);
-    mat1.Print(); 
-    mat2.Print(); 
+    std::cout<<mat1 ;
+    std::cout<<mat2 ;
     std::cout << typeid(mat1[0]).name() << "\n";
     std::cout << (mat1[0][0]) << "\n";
     std::cout << (mat1 + mat2) << std::endl;
