@@ -15,31 +15,30 @@ Matrix::Matrix(int** vector,int rowCount,int colCount) {
 
         this->colCount = colCount;
         this->rowCount = rowCount; 
-         //the adress shouldn't change
-            head = vectarr = new vect();
+        std::vector<int>v* = new std::vector<int>(colCount,0); 
+       	//the adress shouldn't change
         for (int i = 0; i < rowCount; i++) {
-            InsertVect(vector[i],colCount,vectarr);
-            vectarr++;
+	    v[i]=new std::vector<int>(colCount,0);
+            //InsertVect(vector[i],colCount,vectarr);
         }
-        vectarr = head;
     }
     else {
         throw BadPtr();
     }
 }
-Matrix& Matrix::operator =(Matrix const & m1) {
+Matrix Matrix::operator =(Matrix const & m1) {
     if (rowCount == m1.rowCount && colCount == m1.colCount) {
 
         rowCount = m1.rowCount;
         colCount = m1.colCount;
-        std::copy(m1.vectarr, m1.vectarr + m1.rowCount, vectarr);
+        std::copy(m1._v.begin(), m1._v.begin() + rowCount, _v);
     }
     else
     {
         throw BadMatrices();//2check
     }
     
-    return *this;
+    return m1;
 }
 void Matrix::Transform(Matrix& m1)
 {
@@ -50,7 +49,7 @@ Matrix Matrix::operator+(Matrix  & m1)
 
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < colCount; j++) {
-                m1.vectarr[i].intern[j] += vectarr[i][j];
+                m1[i][j] += (*this)[i][j];
             }
         }
     }
@@ -72,11 +71,11 @@ std::ostream& operator<<(std::ostream& os, const Matrix& m1)
     return os;
 }
  
-Matrix::vect& Matrix::operator[](int i)  const
+std::vector<int> Matrix::operator[](int i)  const
 {
     if (i > -1) {
         if (i < rowCount) {
-            return vectarr[i];
+            return _v[i]; 
         }
         throw Matrix::BadData(0); 
     }
@@ -88,7 +87,7 @@ Matrix Matrix::operator-(Matrix  & m1)
 
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < colCount; j++) {
-                m1[i].intern[j] -= vectarr[i][j];
+                m1[i][j] -= (*this)[i][j];
             }
         }
     }
@@ -138,15 +137,7 @@ Matrix::vect::vect(int* row, int len) {
     std::copy(row, row+ len, intern);
     this->len = len;
 }
-void Matrix::InsertVect(int* row, int len, vect* v) {
-    vect* v1 = new vect();
-    v1->intern = new int[len];
 
-    std::copy(row, row + len, v1->intern);
-    v1->len = len;
-    std::copy(v1, v1 + len, v); 
-}
- 
 Matrix::vect::vect(vect& v) {
     this->len = v.len;
     intern = new int[len];
