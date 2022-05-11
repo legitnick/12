@@ -13,7 +13,6 @@ int main() {
             std::cout << a[i][j]<<"\n";
         }
     }
-    int rand = 5;  
 
     Matrix mat1(a,rowCount,colCount);
     Matrix mat2(a,rowCount,colCount);

@@ -1,6 +1,7 @@
 #pragma once
 #include<vector>
 #include <algorithm>
+#include <climits>
 #include <iostream>  
 class Matrix
 {
