@@ -24,7 +24,7 @@ int main() {
     std::cout<<mat1 ;
     std::cout<<mat2 ;
     std::cout << typeid(mat1[0]).name() << "\n";
-    std::cout << (mat1[0][0]) << "\n";
+    std::cout << (mat1[0][0][0]) << "\n";
     std::cout << (mat1 + mat2) << std::endl;
     std::cout << (mat1 - mat2) << std::endl;
 }

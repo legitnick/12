@@ -7,7 +7,6 @@ class Matrix
 {
 	int rowCount,colCount; 
 	std::vector<int>* _v;
-		void InsertVect(int* row, int len,vect* v);
 public:
 	Matrix(int** vector, int rowCount, int colCount);
 	~Matrix();
@@ -22,7 +21,8 @@ public:
 		bool under;
 
 	};
-	std::vector<int>& operator[](int i)const;
+	
+	std::vector<int> operator[](int i)const;
 	Matrix operator-(Matrix  & m1);
 	Matrix operator*(Matrix  & m1);
 	Matrix operator+(Matrix   &m1);
